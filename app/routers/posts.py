@@ -1,5 +1,16 @@
+import shutil
 from typing import List, Optional
-from fastapi import Depends, HTTPException, Response, status, APIRouter
+from fastapi import (
+    Depends,
+    Form,
+    HTTPException,
+    Response,
+    status,
+    APIRouter,
+    File,
+    UploadFile,
+)
+from fastapi.responses import FileResponse
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
@@ -39,15 +50,53 @@ def get_posts(
     "", status_code=status.HTTP_201_CREATED, response_model=schemas.PostRespone
 )
 def create_post(
-    content: schemas.Post,
+    contents: schemas.Post = Depends(),
+    image: Optional[UploadFile] = File(None),
     db: Session = Depends(get_db),
     current_user: int = Depends(oauth2.get_current_user),
 ):
-    new_post = models.Post(user_id=current_user.id, **content.dict())
+
+    imgUrl = ""
+    if image is not None:
+        with open(f"media/{image.filename}", "wb") as media:
+            shutil.copyfileobj(image.file, media)
+        print(image.filename)
+        imgUrl += f"{image.filename}"
+
+    print(contents.title)
+    new_post = models.Post(
+        user_id=current_user.id, image=imgUrl.strip(), **contents.dict()
+    )
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
     return new_post
+
+
+@router.post("/upload")
+def upload_image(image: UploadFile = File(...)):
+    with open(f"media/{image.filename}", "wb") as media:
+        shutil.copyfileobj(image.file, media)
+    print(image.filename)
+
+
+@router.get("/uploads/{filename}")
+def upload_image(
+    filename: str,
+    db: Session = Depends(get_db),
+):
+    # with open(f"media/{image.filename}", "wb") as media:
+    #     shutil.copyfileobj(image.file, media)
+    # print(image.filename)
+    # print(name.content)
+    pic = db.query(models.Post).filter(models.Post.image == filename).first()
+
+    if not pic:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="File not found"
+        )
+    # return {"v": name.dict(), "image": image.filename}
+    return FileResponse(f"media/{pic.image}")
 
 
 # Get post by id

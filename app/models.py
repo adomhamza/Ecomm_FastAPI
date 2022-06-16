@@ -22,6 +22,7 @@ class Post(Base):
     created_at = Column(
         TIMESTAMP(timezone=True), server_default=text("now()"), nullable=False
     )
+    image = Column(String, nullable=True)
     user_id = Column(
         INTEGER, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )

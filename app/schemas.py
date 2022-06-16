@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import List, Optional
 from uuid import UUID
 
+
 from pydantic import BaseModel, EmailStr
 from pydantic.types import conint
 
@@ -11,12 +12,16 @@ class Post(BaseModel):
     content: str
     published: bool = True
 
+    class Config:
+        anystr_strip_whitespace = True
+
 
 class PostRespone(BaseModel):
     title: str
     content: str
     published: bool
     user_id: int
+    image: Optional[str] = None
 
     class Config:
         orm_mode = True
@@ -38,6 +43,7 @@ class GetRespone(BaseModel):
     published: bool
     user_id: int
     created_at: datetime
+    image: Optional[str] = None
 
     owner: UserResponse
 
