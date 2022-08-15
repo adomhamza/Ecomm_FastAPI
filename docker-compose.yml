@@ -1,0 +1,17 @@
+version: '3.9'
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+
+  postgres:
+    image: postgres
+    
+    environment:
+      POSTGRES_PASSWORD: "$leek"
+      POSTGRES_DATABASE: fastapi
+
+    volumes:
+      - postgres-db:/var/lib/postgresql/data 
+

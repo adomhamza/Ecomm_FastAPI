@@ -1,22 +1,23 @@
+import json
 import shutil
 from typing import List, Optional
+from urllib import request
+
+from app import models, oauth2, schemas
+from app.database import get_db
 from fastapi import (
+    APIRouter,
     Depends,
+    File,
     Form,
     HTTPException,
     Response,
-    status,
-    APIRouter,
-    File,
     UploadFile,
+    status,
 )
 from fastapi.responses import FileResponse
 from sqlalchemy import func
 from sqlalchemy.orm import Session
-
-from app import models, schemas, oauth2
-from app.database import get_db
-
 
 router = APIRouter(prefix="/post", tags=["Post"])
 
@@ -171,3 +172,34 @@ def delete_post_by_id(
     raise HTTPException(
         status_code=status.HTTP_403_FORBIDDEN, detail=f"You can't touch this"
     )
+
+
+@router.delete("/del")
+def dele():
+    """kj
+    0dca1f5c-c4ae-11ec-ba6c-33127cb20d29
+    """
+    mk = {}
+    num = "233"
+    with open("9912910023.csv", "r", encoding="utf-8") as file:
+        # data = json.load(file)
+        # print(file)
+        for i in file:
+            print(i.strip())
+
+            url = "http://178.79.172.225/gh/v1/customers/subscriptions/remove/"
+
+            payload = json.dumps(
+                {
+                    "customerId": f"{num}{i.strip()}",
+                    "subscriptionId": "9912910023",
+                }
+            )
+            headers = {
+                "x-api-key": "v2mT7VkdWWLTgWMBwuwkdDuJweHU1zsk",
+                "Content-Type": "application/json",
+            }
+
+            response = request.request("DELETE", url, headers=headers, data=payload)
+            with open("deact.csv", "a", encoding="utf-8") as writer:
+                writer.write(i.strip() + " " + response.json()["statusMessage"] + "\n")

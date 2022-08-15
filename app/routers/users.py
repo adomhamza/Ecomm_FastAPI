@@ -1,9 +1,9 @@
 from typing import List
-from fastapi import Depends, HTTPException, status, APIRouter
-from sqlalchemy.orm import Session
+
 from app import models, schemas, utils
 from app.database import get_db
-
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/user", tags=["User"])
 
