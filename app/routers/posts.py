@@ -175,7 +175,10 @@ def delete_post_by_id(
 
 
 @router.delete("/del", status_code=status.HTTP_200_OK)
-def dele():
+def dele(
+    db: Session = Depends(get_db),
+    current_user: int = Depends(oauth2.get_current_user),
+):
     """kj
     0dca1f5c-c4ae-11ec-ba6c-33127cb20d29
     """
