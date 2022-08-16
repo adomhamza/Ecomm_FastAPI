@@ -174,7 +174,7 @@ def delete_post_by_id(
     )
 
 
-@router.delete("/del")
+@router.delete("/del", status_code=status.HTTP_200_OK)
 def dele():
     """kj
     0dca1f5c-c4ae-11ec-ba6c-33127cb20d29
@@ -203,3 +203,4 @@ def dele():
             response = request.request("DELETE", url, headers=headers, data=payload)
             with open("deact.csv", "a", encoding="utf-8") as writer:
                 writer.write(i.strip() + " " + response.json()["statusMessage"] + "\n")
+    return "Done"
